@@ -127,7 +127,7 @@ export function LiveTranslationScreen() {
   };
 
   return (
-    <Screen>
+    <Screen contentStyle={styles.screenContent}>
       <View style={styles.langRow}>
         <Pressable style={[styles.pill, styles.pillActive]} onPress={() => setPickerTarget(pickerTarget === "source" ? null : "source")}>
           <Text style={styles.pillActiveText}>{languageLabel(source)}</Text>
@@ -194,6 +194,10 @@ export function LiveTranslationScreen() {
 }
 
 const styles = StyleSheet.create({
+  screenContent: {
+    paddingTop: 14,
+    paddingBottom: 40,
+  },
   langRow: { flexDirection: "row", alignItems: "center", gap: 10, justifyContent: "center" },
   pill: {
     paddingHorizontal: 22,
@@ -216,6 +220,7 @@ const styles = StyleSheet.create({
   arrow: { fontSize: 18, color: theme.colors.subText },
   languagePickerCard: {
     gap: 14,
+    borderRadius: 22,
   },
   pickerTitle: {
     fontSize: 16,
@@ -244,7 +249,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   noticeCard: { borderRadius: 20 },
-  notice: { color: theme.colors.subText, lineHeight: 24 },
+  notice: { color: theme.colors.subText, lineHeight: 24, fontSize: 15 },
   label: { color: theme.colors.subText, marginBottom: 10, fontWeight: "700" },
   languageHint: {
     position: "absolute",
@@ -253,15 +258,15 @@ const styles = StyleSheet.create({
     color: theme.colors.accent,
     fontWeight: "800",
   },
-  message: { color: theme.colors.text, fontSize: 22, lineHeight: 30 },
-  messageCard: { minHeight: 140 },
-  translateCard: { borderWidth: 1.5, borderColor: theme.colors.accent, minHeight: 150 },
+  message: { color: theme.colors.text, fontSize: 20, lineHeight: 30, marginTop: 12 },
+  messageCard: { minHeight: 140, borderRadius: 24 },
+  translateCard: { borderWidth: 1.5, borderColor: theme.colors.accent, minHeight: 150, borderRadius: 24 },
   actions: { gap: 12 },
-  uploadButton: { backgroundColor: "#EEF2F8" },
+  uploadButton: { backgroundColor: "#EEF2F8", minHeight: 52 },
   speakButton: {
-    minHeight: 58,
+    minHeight: 62,
     backgroundColor: theme.colors.accent,
-    borderRadius: 18,
+    borderRadius: 20,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -273,6 +278,6 @@ const styles = StyleSheet.create({
   speakText: {
     color: "#FFFFFF",
     fontWeight: "800",
-    fontSize: 22,
+    fontSize: 21,
   },
 });

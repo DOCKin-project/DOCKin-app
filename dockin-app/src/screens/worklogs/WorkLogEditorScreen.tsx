@@ -113,7 +113,7 @@ export function WorkLogEditorScreen({ navigation, route }: Props) {
   };
 
   return (
-    <Screen>
+    <Screen contentStyle={styles.screenContent}>
       <View style={styles.switchRow}>
         {["text", "stt"].map((item) => (
           <Pressable key={item} onPress={() => setMode(item as "text" | "stt")} style={[styles.switch, mode === item && styles.switchActive]}>
@@ -123,18 +123,28 @@ export function WorkLogEditorScreen({ navigation, route }: Props) {
       </View>
 
       <AppCard style={styles.card}>
+        <View style={styles.fieldSection}>
+          <Text style={styles.sectionLabel}>설비 / 작업 구역</Text>
+          <View style={styles.grayField}><Text style={styles.grayFieldText}>제 {equipmentId} 조선소</Text></View>
+        </View>
+        <View style={styles.voiceBox}>
+          <Text style={styles.sectionLabel}>음성입력</Text>
+          <View style={styles.voiceCircle}>
+            <Text style={styles.voiceIcon}>●</Text>
+          </View>
+          <Text style={styles.voiceText}>{mode === "stt" ? "녹음 준비됨" : "키보드 입력 모드"}</Text>
+          <AppInput
+            label="작업 내용"
+            value={logText}
+            onChangeText={setLogText}
+            multiline
+            numberOfLines={8}
+            textAlignVertical="top"
+            style={styles.textArea}
+            placeholder="작업 내용을 입력하세요"
+          />
+        </View>
         <AppInput label="제목" value={title} onChangeText={setTitle} placeholder="작업일지 제목" />
-        <AppInput label="설비 / 작업 구역 ID" value={equipmentId} onChangeText={setEquipmentId} keyboardType="numeric" placeholder="2" />
-        <AppInput
-          label="작업 내용"
-          value={logText}
-          onChangeText={setLogText}
-          multiline
-          numberOfLines={8}
-          textAlignVertical="top"
-          style={styles.textArea}
-          placeholder="작업 내용을 입력하세요"
-        />
         <Text style={styles.author}>작성자: {userName ?? "김철수"}</Text>
         <View style={styles.attachRow}>
           <AppButton label={audioUri ? "음성 선택 완료" : "음성 첨부"} variant="secondary" onPress={pickAudio} style={styles.attachButton} />
@@ -151,6 +161,10 @@ export function WorkLogEditorScreen({ navigation, route }: Props) {
 }
 
 const styles = StyleSheet.create({
+  screenContent: {
+    paddingTop: 14,
+    paddingBottom: 40,
+  },
   switchRow: {
     flexDirection: "row",
     backgroundColor: "#EEF1F5",
@@ -175,10 +189,60 @@ const styles = StyleSheet.create({
   },
   card: {
     gap: 16,
+    borderRadius: 24,
+  },
+  fieldSection: {
+    gap: 10,
+  },
+  sectionLabel: {
+    color: theme.colors.text,
+    fontWeight: "700",
+    fontSize: 16,
+  },
+  grayField: {
+    minHeight: 52,
+    borderRadius: 12,
+    backgroundColor: "#F3F4FA",
+    justifyContent: "center",
+    paddingHorizontal: 16,
+  },
+  grayFieldText: {
+    color: "#7C8390",
+    fontSize: 16,
+  },
+  voiceBox: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 18,
+    paddingVertical: 8,
+    gap: 12,
+    alignItems: "center",
+  },
+  voiceCircle: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    backgroundColor: "#FF1F1F",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#FF7A7A",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 18,
+    elevation: 6,
+  },
+  voiceIcon: {
+    color: "#FFFFFF",
+    fontSize: 30,
+  },
+  voiceText: {
+    color: "#E03131",
+    fontWeight: "800",
+    fontSize: 18,
   },
   textArea: {
     minHeight: 160,
     paddingTop: 18,
+    width: "100%",
   },
   author: {
     color: theme.colors.subText,

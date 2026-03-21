@@ -18,7 +18,7 @@ export function ChatBubble({ message }: { message: ChatMessage }) {
 
 const styles = StyleSheet.create({
   wrap: {
-    marginBottom: 14,
+    marginBottom: 18,
     maxWidth: "88%",
   },
   mineWrap: {
@@ -29,16 +29,17 @@ const styles = StyleSheet.create({
   },
   sender: {
     color: theme.colors.subText,
-    marginBottom: 4,
+    marginBottom: 6,
     fontWeight: "600",
+    fontSize: 13,
   },
   bubble: {
-    borderRadius: 20,
-    paddingHorizontal: 16,
+    borderRadius: 18,
+    paddingHorizontal: 18,
     paddingVertical: 14,
   },
   mine: {
-    backgroundColor: "#D9EBFF",
+    backgroundColor: "#FFFFFF",
   },
   other: {
     backgroundColor: "#FFFFFF",
@@ -54,9 +55,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   time: {
-    marginTop: 4,
+    marginTop: 6,
     fontSize: 11,
     color: "#98A2B3",
   },
 });
-

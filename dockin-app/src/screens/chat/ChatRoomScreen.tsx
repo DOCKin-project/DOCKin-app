@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
-import { FlatList, StyleSheet, TextInput, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, TextInput, View } from "react-native";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Screen } from "@/src/components/common/Screen";
 import { AppButton } from "@/src/components/common/AppButton";
@@ -33,9 +34,12 @@ export function ChatRoomScreen({ route }: Props) {
   };
 
   return (
-    <Screen scrollable={false} contentStyle={styles.content}>
+    <Screen scrollable={false} contentStyle={styles.content} useGradient>
       <View style={styles.searchRow}>
-        <TextInput value={keyword} onChangeText={setKeyword} style={styles.input} placeholder="채팅 내용 검색" />
+        <View style={styles.searchInputWrap}>
+          <MaterialIcons name="search" size={22} color="#8B97A6" />
+          <TextInput value={keyword} onChangeText={setKeyword} style={styles.input} placeholder="채팅 내용 검색" />
+        </View>
         <AppButton label="검색" onPress={handleSearch} style={styles.send} />
       </View>
       <FlatList
@@ -45,24 +49,70 @@ export function ChatRoomScreen({ route }: Props) {
         contentContainerStyle={styles.list}
       />
       <View style={styles.inputRow}>
-        <TextInput value={text} onChangeText={setText} style={styles.input} placeholder="메시지 입력" />
-        <AppButton label="전송" onPress={handleSend} style={styles.send} />
+        <Pressable style={styles.plusButton}>
+          <MaterialIcons name="add" size={30} color="#6F7680" />
+        </Pressable>
+        <View style={styles.messageInputWrap}>
+          <TextInput value={text} onChangeText={setText} style={styles.messageInput} placeholder="메시지 입력" />
+          <MaterialCommunityIcons name="web" size={28} color="#3A3A3A" />
+        </View>
+        <Pressable style={styles.sendFab} onPress={handleSend}>
+          <MaterialIcons name="arrow-upward" size={26} color="#FFFFFF" />
+        </Pressable>
       </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { flex: 1, paddingBottom: 16 },
-  list: { paddingBottom: 24 },
+  content: { flex: 1, paddingBottom: 12 },
+  list: { paddingBottom: 24, paddingTop: 8 },
   searchRow: { flexDirection: "row", gap: 12, alignItems: "center", marginBottom: 12 },
-  inputRow: { flexDirection: "row", gap: 12, alignItems: "center" },
-  input: {
+  searchInputWrap: {
     flex: 1,
     minHeight: 52,
     borderRadius: theme.radius.pill,
     backgroundColor: "#FFFFFF",
-    paddingHorizontal: 18,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
-  send: { width: 96 },
+  inputRow: { flexDirection: "row", gap: 10, alignItems: "center", paddingTop: 6 },
+  input: {
+    flex: 1,
+    color: theme.colors.text,
+  },
+  plusButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  messageInputWrap: {
+    flex: 1,
+    minHeight: 52,
+    borderRadius: theme.radius.pill,
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  messageInput: {
+    flex: 1,
+    color: theme.colors.primary,
+    fontWeight: "700",
+  },
+  send: { width: 82, minHeight: 52 },
+  sendFab: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: theme.colors.accent,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
