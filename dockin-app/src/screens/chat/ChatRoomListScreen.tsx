@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Screen } from "@/src/components/common/Screen";
@@ -18,7 +18,15 @@ export function ChatRoomListScreen({ navigation }: any) {
   const { data, loading, error, reload } = useAsyncData(loadRooms);
   const [roomName, setRoomName] = useState("");
   const [participants, setParticipants] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const filteredRooms = useMemo(
+    () => (data ?? []).filter((room: ChatRoom) => room.title.toLowerCase().includes(searchKeyword.trim().toLowerCase())),
+    [data, searchKeyword],
+  );
 
   const handleCreateRoom = async () => {
     const participantIds = participants.split(",").map((item) => item.trim()).filter(Boolean);
@@ -45,18 +53,34 @@ export function ChatRoomListScreen({ navigation }: any) {
         </Pressable>
       </View>
       <AppCard style={styles.toolbar}>
-        <Text style={styles.search}>채팅방 이름 검색</Text>
-        <MaterialIcons name="add-circle-outline" size={32} color={theme.colors.primary} />
+        <Pressable style={styles.toolbarButton} onPress={() => setSearchOpen((prev) => !prev)}>
+          <MaterialIcons name="search" size={24} color={theme.colors.primary} />
+          <Text style={styles.search}>채팅방 이름 검색</Text>
+        </Pressable>
+        <Pressable onPress={() => setCreateOpen((prev) => !prev)}>
+          <MaterialIcons name="add-circle-outline" size={32} color={theme.colors.primary} />
+        </Pressable>
       </AppCard>
-      <AppCard style={styles.formCard}>
-        <AppInput label="채팅방 생성" value={roomName} onChangeText={setRoomName} placeholder="채팅방 이름" />
-        <AppInput label="참여자 사원번호" value={participants} onChangeText={setParticipants} placeholder="1001,1002,1003" />
-        <AppButton label="채팅방 만들기" onPress={handleCreateRoom} loading={submitting} />
-      </AppCard>
+      {searchOpen ? (
+        <AppCard style={styles.formCard}>
+          <AppInput label="채팅방 이름 검색" value={searchKeyword} onChangeText={setSearchKeyword} placeholder="채팅방 이름 입력" />
+          <View style={styles.inlineButtons}>
+            <AppButton label="검색" onPress={() => {}} style={styles.inlineButton} />
+            <AppButton label="초기화" variant="secondary" onPress={() => setSearchKeyword("")} style={styles.inlineButton} />
+          </View>
+        </AppCard>
+      ) : null}
+      {createOpen ? (
+        <AppCard style={styles.formCard}>
+          <AppInput label="채팅방 생성" value={roomName} onChangeText={setRoomName} placeholder="채팅방 이름" />
+          <AppInput label="참여자 사원번호" value={participants} onChangeText={setParticipants} placeholder="1001,1002,1003" />
+          <AppButton label="채팅방 만들기" onPress={handleCreateRoom} loading={submitting} />
+        </AppCard>
+      ) : null}
       {error ? <Text style={styles.error}>{error}</Text> : null}
       {loading ? <LoadingState /> : null}
-      {!loading && !data?.length ? <EmptyState title="채팅방이 없습니다." /> : null}
-      {data?.map((room: ChatRoom) => (
+      {!loading && !filteredRooms.length ? <EmptyState title={searchKeyword ? "검색 결과가 없습니다." : "채팅방이 없습니다."} /> : null}
+      {filteredRooms.map((room: ChatRoom) => (
         <Pressable key={room.roomId} onPress={() => navigation.navigate("ChatRoom", { roomId: room.roomId, title: room.title })}>
           <AppCard style={styles.roomCard}>
             <View style={styles.roomHeader}>
@@ -83,7 +107,10 @@ const styles = StyleSheet.create({
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   title: { fontSize: 16, fontWeight: "700", color: theme.colors.subText },
   toolbar: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  toolbarButton: { flexDirection: "row", alignItems: "center", gap: 8 },
   formCard: { gap: 12 },
+  inlineButtons: { flexDirection: "row", gap: 10 },
+  inlineButton: { flex: 1 },
   search: { color: theme.colors.primary, fontWeight: "700", fontSize: 18 },
   roomCard: { gap: 10, paddingVertical: 14 },
   roomHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
