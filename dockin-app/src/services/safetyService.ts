@@ -64,7 +64,7 @@ export const safetyService = {
     })) satisfies SafetyEducation[];
   },
 
-  async searchEducationList(keyword: string, admin = false) {
+  async searchEducationList(keyword: string, admin = false): Promise<SafetyEducation[]> {
     const response = await springApi.get(admin ? "/api/safety/admin/courses/search" : "/api/safety/user/courses/search", {
       params: pageableParams(0, 20, keyword),
     });
@@ -82,7 +82,7 @@ export const safetyService = {
     })) satisfies SafetyEducation[];
   },
 
-  async getAdminEducationList() {
+  async getAdminEducationList(): Promise<SafetyEducation[]> {
     const response = await springApi.get("/api/safety/admin/courses", {
       params: pageableParams(0, 20),
     });
@@ -100,7 +100,7 @@ export const safetyService = {
     })) satisfies SafetyEducation[];
   },
 
-  async createEducation(payload: SafetyEducationPayload) {
+  async createEducation(payload: SafetyEducationPayload): Promise<SafetyEducation> {
     const response = await springApi.post("/api/safety/admin/courses", payload);
     return {
       id: response.data.courseId,
@@ -116,7 +116,7 @@ export const safetyService = {
     } satisfies SafetyEducation;
   },
 
-  async updateEducation(courseId: number, payload: SafetyEducationPayload) {
+  async updateEducation(courseId: number, payload: SafetyEducationPayload): Promise<SafetyEducation> {
     const response = await springApi.put(`/api/safety/admin/courses/${courseId}`, payload);
     return {
       id: response.data.courseId,

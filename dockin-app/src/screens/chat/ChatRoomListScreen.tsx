@@ -1,8 +1,10 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Screen } from "@/src/components/common/Screen";
 import { AppCard } from "@/src/components/common/AppCard";
+import { AppInput } from "@/src/components/common/AppInput";
+import { AppButton } from "@/src/components/common/AppButton";
 import { EmptyState } from "@/src/components/common/EmptyState";
 import { LoadingState } from "@/src/components/common/LoadingState";
 import { StatusBadge } from "@/src/components/common/StatusBadge";
@@ -13,7 +15,26 @@ import type { ChatRoom } from "@/src/types";
 
 export function ChatRoomListScreen({ navigation }: any) {
   const loadRooms = useCallback(() => chatService.getRooms(), []);
-  const { data, loading, error } = useAsyncData(loadRooms);
+  const { data, loading, error, reload } = useAsyncData(loadRooms);
+  const [roomName, setRoomName] = useState("");
+  const [participants, setParticipants] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleCreateRoom = async () => {
+    const participantIds = participants.split(",").map((item) => item.trim()).filter(Boolean);
+    if (!roomName.trim() || participantIds.length === 0) {
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await chatService.createRoom({ roomName: roomName.trim(), participantIds });
+      setRoomName("");
+      setParticipants("");
+      await reload();
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <Screen>
@@ -26,6 +47,11 @@ export function ChatRoomListScreen({ navigation }: any) {
       <AppCard style={styles.toolbar}>
         <Text style={styles.search}>채팅방 이름 검색</Text>
         <MaterialIcons name="add-circle-outline" size={32} color={theme.colors.primary} />
+      </AppCard>
+      <AppCard style={styles.formCard}>
+        <AppInput label="채팅방 생성" value={roomName} onChangeText={setRoomName} placeholder="채팅방 이름" />
+        <AppInput label="참여자 사원번호" value={participants} onChangeText={setParticipants} placeholder="1001,1002,1003" />
+        <AppButton label="채팅방 만들기" onPress={handleCreateRoom} loading={submitting} />
       </AppCard>
       {error ? <Text style={styles.error}>{error}</Text> : null}
       {loading ? <LoadingState /> : null}
@@ -57,6 +83,7 @@ const styles = StyleSheet.create({
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   title: { fontSize: 16, fontWeight: "700", color: theme.colors.subText },
   toolbar: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  formCard: { gap: 12 },
   search: { color: theme.colors.primary, fontWeight: "700", fontSize: 18 },
   roomCard: { gap: 10, paddingVertical: 14 },
   roomHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },

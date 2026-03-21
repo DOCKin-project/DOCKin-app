@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   subtitle: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: "700",
     color: theme.colors.text,
   },
@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
     color: theme.colors.accent,
   },
   logo: {
-    width: 320,
-    height: 140,
+    width: 260,
+    height: 112,
   },
   footer: {
     gap: 16,

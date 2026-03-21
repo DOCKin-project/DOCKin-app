@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   logo: {
-    width: 240,
-    height: 100,
+    width: 220,
+    height: 88,
     alignSelf: "center",
   },
   form: {

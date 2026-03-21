@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator, type BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { theme } from "@/src/theme/theme";
 import { useAuthStore } from "@/src/store/authStore";
 import { OnboardingScreen } from "@/src/screens/auth/OnboardingScreen";
@@ -202,7 +202,11 @@ export function RootNavigator() {
   }, [hydrate]);
 
   if (!hydrated) {
-    return <View style={{ flex: 1, backgroundColor: "#fff" }} />;
+    return (
+      <View style={styles.loadingScreen}>
+        <Image source={require("../../assets/dkTitle.png")} resizeMode="contain" style={styles.loadingLogo} />
+      </View>
+    );
   }
 
   return (
@@ -250,5 +254,15 @@ const styles = StyleSheet.create({
   },
   tabLabelFocused: {
     color: theme.colors.primary,
+  },
+  loadingScreen: {
+    flex: 1,
+    backgroundColor: "#F7FBFF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  loadingLogo: {
+    width: 220,
+    height: 90,
   },
 });

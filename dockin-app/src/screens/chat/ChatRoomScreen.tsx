@@ -13,8 +13,9 @@ type Props = NativeStackScreenProps<RootStackParamList, "ChatRoom">;
 
 export function ChatRoomScreen({ route }: Props) {
   const [text, setText] = useState("");
+  const [keyword, setKeyword] = useState("");
   const loadMessages = useCallback(() => chatService.getMessages(route.params.roomId), [route.params.roomId]);
-  const { data, setData } = useAsyncData(loadMessages);
+  const { data, setData, reload } = useAsyncData(loadMessages);
 
   const handleSend = async () => {
     const message = await chatService.sendMessage({ roomId: route.params.roomId, message: text });
@@ -22,8 +23,21 @@ export function ChatRoomScreen({ route }: Props) {
     setText("");
   };
 
+  const handleSearch = async () => {
+    if (!keyword.trim()) {
+      await reload();
+      return;
+    }
+    const result = await chatService.searchMessages(route.params.roomId, keyword.trim());
+    setData(result);
+  };
+
   return (
     <Screen scrollable={false} contentStyle={styles.content}>
+      <View style={styles.searchRow}>
+        <TextInput value={keyword} onChangeText={setKeyword} style={styles.input} placeholder="채팅 내용 검색" />
+        <AppButton label="검색" onPress={handleSearch} style={styles.send} />
+      </View>
       <FlatList
         data={data ?? []}
         keyExtractor={(item) => String(item.id)}
@@ -41,6 +55,7 @@ export function ChatRoomScreen({ route }: Props) {
 const styles = StyleSheet.create({
   content: { flex: 1, paddingBottom: 16 },
   list: { paddingBottom: 24 },
+  searchRow: { flexDirection: "row", gap: 12, alignItems: "center", marginBottom: 12 },
   inputRow: { flexDirection: "row", gap: 12, alignItems: "center" },
   input: {
     flex: 1,
@@ -51,4 +66,3 @@ const styles = StyleSheet.create({
   },
   send: { width: 96 },
 });
-
