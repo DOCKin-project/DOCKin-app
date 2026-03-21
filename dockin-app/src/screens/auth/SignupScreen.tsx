@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Screen } from "@/src/components/common/Screen";
 import { AppInput } from "@/src/components/common/AppInput";
@@ -42,6 +43,9 @@ export function SignupScreen({ navigation }: Props) {
 
   return (
     <Screen useGradient contentStyle={styles.content}>
+      <Pressable style={styles.languageButton}>
+        <MaterialCommunityIcons name="web" size={28} color={theme.colors.text} />
+      </Pressable>
       <Image source={require("../../../assets/dkTitle.png")} style={styles.logo} resizeMode="contain" />
       <Text style={styles.title}>회원가입</Text>
       <Text style={styles.description}>필요한 정보만 간단히 입력하세요.</Text>
@@ -74,6 +78,10 @@ export function SignupScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   content: {
     gap: 16,
+  },
+  languageButton: {
+    alignSelf: "flex-end",
+    marginTop: 8,
   },
   logo: {
     width: 220,

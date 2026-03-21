@@ -17,7 +17,6 @@ export function SafetyEducationScreen() {
 
   return (
     <Screen>
-      <Text style={styles.title}>안전 교육이수</Text>
       <AppCard style={styles.hero}>
         <Text style={styles.heroText}>이수 현황</Text>
         <Text style={styles.heroCount}>{data?.filter((item: SafetyEducation) => item.completed).length ?? 0} / {data?.length ?? 0}</Text>
@@ -42,7 +41,6 @@ export function SafetyEducationScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 28, fontWeight: "800", color: theme.colors.text },
   hero: { backgroundColor: theme.colors.primary },
   heroText: { color: "#FFFFFF", fontSize: 20, fontWeight: "800" },
   heroCount: { color: "#FFFFFF", fontSize: 36, fontWeight: "900", marginTop: 10 },

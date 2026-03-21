@@ -1,20 +1,25 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { Screen } from "@/src/components/common/Screen";
 import { AppCard } from "@/src/components/common/AppCard";
 import { theme } from "@/src/theme/theme";
 import { useAuthStore } from "@/src/store/authStore";
+import DocsIcon from "../../../assets/manager/docs.svg";
+import AlarmIcon from "../../../assets/manager/point.svg";
+import MapIcon from "../../../assets/manager/map.svg";
+import SafeIcon from "../../../assets/manager/safe.svg";
+import MembersIcon from "../../../assets/manager/members.svg";
 
 export function AdminHomeScreen({ navigation }: BottomTabScreenProps<any>) {
   const userName = useAuthStore((state) => state.userName);
 
   const actions = [
-    { label: "근태관리", icon: "clipboard-list-outline", route: "AttendanceManagement" },
-    { label: "긴급사항", icon: "alert-circle-outline", route: "EmergencyNotice" },
-    { label: "구역관리", icon: "map-marker-radius-outline" },
-    { label: "일일점검", icon: "shield-check-outline" },
+    { label: "근태관리", icon: DocsIcon, route: "AttendanceManagement" },
+    { label: "긴급사항", icon: AlarmIcon, route: "EmergencyNotice" },
+    { label: "구역관리", icon: MapIcon },
+    { label: "일일점검", icon: SafeIcon },
   ];
 
   return (
@@ -24,9 +29,14 @@ export function AdminHomeScreen({ navigation }: BottomTabScreenProps<any>) {
           <Text style={styles.name}>관리자 {userName ?? "김철수"}</Text>
           <Text style={styles.subtitle}>현장 운영과 공지, 근태를 한 번에 관리합니다.</Text>
         </View>
-        <TouchableOpacity onPress={() => navigation.getParent()?.navigate("Settings")}>
-          <MaterialIcons name="settings" size={28} color={theme.colors.text} />
-        </TouchableOpacity>
+        <View style={styles.headerIcons}>
+          <MaterialIcons name="search" size={24} color={theme.colors.text} />
+          <MaterialIcons name="public" size={24} color={theme.colors.text} />
+          <MaterialIcons name="mail-outline" size={24} color={theme.colors.text} />
+          <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+            <MaterialIcons name="person-outline" size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <AppCard>
@@ -35,10 +45,10 @@ export function AdminHomeScreen({ navigation }: BottomTabScreenProps<any>) {
           {actions.map((item) => (
             <TouchableOpacity
               key={item.label}
-              onPress={() => item.route && navigation.getParent()?.navigate(item.route)}
+              onPress={() => item.route && navigation.navigate(item.route)}
               style={styles.menuCard}
             >
-              <MaterialCommunityIcons name={item.icon as never} size={28} color={theme.colors.accent} />
+              <item.icon width={30} height={30} />
               <Text style={styles.menuLabel}>{item.label}</Text>
             </TouchableOpacity>
           ))}
@@ -54,9 +64,21 @@ export function AdminHomeScreen({ navigation }: BottomTabScreenProps<any>) {
 
       <AppCard>
         <Text style={styles.sectionTitle}>인원관리</Text>
-        <Text style={styles.teamTitle}>A조 (3명)</Text>
-        <Text style={styles.weatherMeta}>작업위치: 2도크 외판부 · 근무시간: 12:00~20:00</Text>
-        <Text style={styles.weatherMeta}>상태: 정상 근무 중 · 이탈자 1명 / 보고 지연 2건</Text>
+        <View style={styles.memberRow}>
+          <View style={styles.memberGrid}>
+            {[0, 1, 2, 3].map((item) => (
+              <View key={item} style={styles.memberBox}>
+                <MembersIcon width={34} height={34} />
+              </View>
+            ))}
+          </View>
+          <View style={styles.memberInfo}>
+            <Text style={styles.teamTitle}>A조 (3명)</Text>
+            <Text style={styles.weatherMeta}>작업위치: 2도크 외판부</Text>
+            <Text style={styles.weatherMeta}>근무시간: 12:00~20:00</Text>
+            <Text style={styles.weatherMeta}>상태: 정상 근무 중</Text>
+          </View>
+        </View>
       </AppCard>
     </Screen>
   );
@@ -66,10 +88,15 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
+  },
+  headerIcons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   name: {
-    fontSize: 30,
+    fontSize: 26,
     fontWeight: "800",
     color: theme.colors.text,
   },
@@ -90,7 +117,7 @@ const styles = StyleSheet.create({
   },
   menuCard: {
     width: "47%",
-    backgroundColor: "#F3F5F9",
+    backgroundColor: "#F4F5F8",
     borderRadius: 20,
     paddingVertical: 18,
     alignItems: "center",
@@ -99,6 +126,27 @@ const styles = StyleSheet.create({
   menuLabel: {
     fontWeight: "700",
     color: theme.colors.text,
+  },
+  memberRow: {
+    flexDirection: "row",
+    gap: 14,
+  },
+  memberGrid: {
+    width: 120,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  memberBox: {
+    width: 56,
+    height: 56,
+    borderRadius: 14,
+    backgroundColor: "#F3F5FA",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  memberInfo: {
+    flex: 1,
   },
   weatherTitle: {
     color: theme.colors.primary,
@@ -122,4 +170,3 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 });
-

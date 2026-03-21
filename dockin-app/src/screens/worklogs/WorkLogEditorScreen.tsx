@@ -117,7 +117,7 @@ export function WorkLogEditorScreen({ navigation, route }: Props) {
       <View style={styles.switchRow}>
         {["text", "stt"].map((item) => (
           <Pressable key={item} onPress={() => setMode(item as "text" | "stt")} style={[styles.switch, mode === item && styles.switchActive]}>
-            <Text style={[styles.switchText, mode === item && styles.switchTextActive]}>{item === "text" ? "텍스트 작성" : "음성(STT) 작성"}</Text>
+            <Text style={[styles.switchText, mode === item && styles.switchTextActive]}>{item === "text" ? "작성" : "번역/STT"}</Text>
           </Pressable>
         ))}
       </View>

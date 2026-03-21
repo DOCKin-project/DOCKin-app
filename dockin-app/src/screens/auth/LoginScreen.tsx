@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Screen } from "@/src/components/common/Screen";
 import { AppInput } from "@/src/components/common/AppInput";
@@ -36,6 +37,9 @@ export function LoginScreen({ navigation }: Props) {
 
   return (
     <Screen useGradient contentStyle={styles.content}>
+      <Pressable style={styles.languageButton}>
+        <MaterialCommunityIcons name="web" size={28} color={theme.colors.text} />
+      </Pressable>
       <Image source={require("../../../assets/dkTitle.png")} style={styles.logo} resizeMode="contain" />
       <View style={styles.form}>
         <Text style={styles.title}>로그인</Text>
@@ -54,8 +58,12 @@ export function LoginScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
-    justifyContent: "center",
-    gap: 36,
+    justifyContent: "flex-start",
+    gap: 28,
+    paddingTop: 32,
+  },
+  languageButton: {
+    alignSelf: "flex-end",
   },
   logo: {
     width: 240,
@@ -64,6 +72,7 @@ const styles = StyleSheet.create({
   },
   form: {
     gap: 18,
+    marginTop: 24,
   },
   title: {
     fontSize: 42,

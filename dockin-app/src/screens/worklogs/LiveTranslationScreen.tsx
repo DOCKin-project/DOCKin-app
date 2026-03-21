@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import { Screen } from "@/src/components/common/Screen";
 import { AppCard } from "@/src/components/common/AppCard";
 import { AppButton } from "@/src/components/common/AppButton";
-import { StatusBadge } from "@/src/components/common/StatusBadge";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { translationService } from "@/src/services/translationService";
 import { createTraceId } from "@/src/utils/trace";
 import { validateSelectedFile } from "@/src/utils/security";
@@ -58,43 +58,87 @@ export function LiveTranslationScreen() {
 
   return (
     <Screen>
-      <Text style={styles.title}>실시간 번역</Text>
       <View style={styles.langRow}>
-        <StatusBadge label={source} tone="orange" />
+        <Pressable style={[styles.pill, styles.pillActive]} onPress={() => setSource(nextPair.source)}>
+          <Text style={styles.pillActiveText}>{source === "vi" ? "베트남어" : source === "ko" ? "한국어" : source}</Text>
+        </Pressable>
         <Text style={styles.arrow}>↔</Text>
-        <StatusBadge label={target} tone="blue" />
+        <Pressable style={styles.pill} onPress={() => setTarget(nextPair.target)}>
+          <Text style={styles.pillText}>{target === "ko" ? "한국어" : target === "vi" ? "베트남어" : target}</Text>
+        </Pressable>
       </View>
-      <View style={styles.actions}>
-        <AppButton label="원문 변경" variant="secondary" onPress={() => setSource(nextPair.source)} style={styles.actionButton} />
-        <AppButton label="번역 변경" variant="secondary" onPress={() => setTarget(nextPair.target)} style={styles.actionButton} />
-      </View>
-      <AppCard>
-        <Text style={styles.notice}>말하기 버튼을 길게 누른 뒤 업로드한 음성 파일을 번역합니다. 자동 언어 감지 연동 포인트는 `/api/ai/rt-translate`입니다.</Text>
+      <AppCard style={styles.noticeCard}>
+        <Text style={styles.notice}>말하기 버튼을 길게 누른 채로 대화하세요. 자동 언어 감지가 활성화되어 있습니다.</Text>
       </AppCard>
-      <AppCard>
+      <AppCard style={styles.messageCard}>
         <Text style={styles.label}>내 언어</Text>
+        <Text style={styles.languageHint}>{source === "vi" ? "베트남어" : "한국어"}</Text>
         <Text style={styles.message}>{sourceText}</Text>
       </AppCard>
       <AppCard style={styles.translateCard}>
         <Text style={styles.label}>번역</Text>
+        <Text style={styles.languageHint}>{target === "ko" ? "한국어" : "베트남어"}</Text>
         <Text style={styles.message}>{translatedText}</Text>
       </AppCard>
       <View style={styles.actions}>
-        <AppButton label={audioUri ? "음성 선택 완료" : "음성 선택"} variant="secondary" onPress={pickAudio} style={styles.actionButton} />
-        <AppButton label="말하기" onPress={handleTranslate} loading={loading} style={styles.actionButton} />
+        <AppButton label={audioUri ? "음성 선택 완료" : "음성 선택"} variant="secondary" onPress={pickAudio} style={styles.uploadButton} />
+        <Pressable style={styles.speakButton} onPress={handleTranslate}>
+          <MaterialCommunityIcons name="microphone-outline" size={30} color="#FFFFFF" />
+          <Text style={styles.speakText}>{loading ? "번역중..." : "말하기"}</Text>
+        </Pressable>
       </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 28, fontWeight: "800", color: theme.colors.text },
-  langRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  langRow: { flexDirection: "row", alignItems: "center", gap: 10, justifyContent: "center" },
+  pill: {
+    paddingHorizontal: 22,
+    paddingVertical: 14,
+    backgroundColor: "#FFFFFF",
+    borderRadius: theme.radius.pill,
+    ...theme.shadow.card,
+  },
+  pillActive: {
+    backgroundColor: theme.colors.accent,
+  },
+  pillText: {
+    color: "#5E5E5E",
+    fontWeight: "700",
+  },
+  pillActiveText: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+  },
   arrow: { fontSize: 18, color: theme.colors.subText },
+  noticeCard: { borderRadius: 20 },
   notice: { color: theme.colors.subText, lineHeight: 24 },
   label: { color: theme.colors.subText, marginBottom: 10, fontWeight: "700" },
+  languageHint: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    color: theme.colors.accent,
+    fontWeight: "800",
+  },
   message: { color: theme.colors.text, fontSize: 22, lineHeight: 30 },
-  translateCard: { borderWidth: 1.5, borderColor: theme.colors.accent },
-  actions: { flexDirection: "row", gap: 12 },
-  actionButton: { flex: 1 },
+  messageCard: { minHeight: 140 },
+  translateCard: { borderWidth: 1.5, borderColor: theme.colors.accent, minHeight: 150 },
+  actions: { gap: 12 },
+  uploadButton: { backgroundColor: "#EEF2F8" },
+  speakButton: {
+    minHeight: 58,
+    backgroundColor: theme.colors.accent,
+    borderRadius: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+  },
+  speakText: {
+    color: "#FFFFFF",
+    fontWeight: "800",
+    fontSize: 22,
+  },
 });

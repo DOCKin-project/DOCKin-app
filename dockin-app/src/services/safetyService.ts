@@ -1,5 +1,5 @@
 import { springApi } from "@/src/api/http";
-import type { SafetyEducation, SafetyInspectionGroup, SafetyInspectionSummary, SafetyWorkerProgress } from "@/src/types";
+import type { SafetyEducation, SafetyEducationPayload, SafetyInspectionGroup, SafetyInspectionSummary, SafetyWorkerProgress } from "@/src/types";
 
 type SafetyCourseDto = {
   courseId: number;
@@ -62,6 +62,78 @@ export const safetyService = {
       progressRate: uncompletedIds.has(item.courseId) ? 0 : 100,
       completed: !uncompletedIds.has(item.courseId),
     })) satisfies SafetyEducation[];
+  },
+
+  async searchEducationList(keyword: string, admin = false) {
+    const response = await springApi.get(admin ? "/api/safety/admin/courses/search" : "/api/safety/user/courses/search", {
+      params: pageableParams(0, 20, keyword),
+    });
+    return ((response.data.content ?? []) as SafetyCourseDto[]).map((item) => ({
+      id: item.courseId,
+      userId: item.userId,
+      title: item.title ?? "안전 교육",
+      description: item.description,
+      videoUrl: item.videoUrl,
+      materialUrl: item.materialUrl,
+      durationMinutes: item.durationMinutes ?? 0,
+      deadline: "-",
+      progressRate: item.status === "WATCHED" ? 100 : 0,
+      completed: item.status === "WATCHED",
+    })) satisfies SafetyEducation[];
+  },
+
+  async getAdminEducationList() {
+    const response = await springApi.get("/api/safety/admin/courses", {
+      params: pageableParams(0, 20),
+    });
+    return ((response.data.content ?? []) as SafetyCourseDto[]).map((item) => ({
+      id: item.courseId,
+      userId: item.userId,
+      title: item.title ?? "안전 교육",
+      description: item.description,
+      videoUrl: item.videoUrl,
+      materialUrl: item.materialUrl,
+      durationMinutes: item.durationMinutes ?? 0,
+      deadline: "-",
+      progressRate: 0,
+      completed: false,
+    })) satisfies SafetyEducation[];
+  },
+
+  async createEducation(payload: SafetyEducationPayload) {
+    const response = await springApi.post("/api/safety/admin/courses", payload);
+    return {
+      id: response.data.courseId,
+      userId: response.data.userId,
+      title: response.data.title,
+      description: response.data.description,
+      videoUrl: response.data.videoUrl,
+      materialUrl: response.data.materialUrl,
+      durationMinutes: response.data.durationMinutes ?? 0,
+      deadline: "-",
+      progressRate: 0,
+      completed: false,
+    } satisfies SafetyEducation;
+  },
+
+  async updateEducation(courseId: number, payload: SafetyEducationPayload) {
+    const response = await springApi.put(`/api/safety/admin/courses/${courseId}`, payload);
+    return {
+      id: response.data.courseId,
+      userId: response.data.userId,
+      title: response.data.title,
+      description: response.data.description,
+      videoUrl: response.data.videoUrl,
+      materialUrl: response.data.materialUrl,
+      durationMinutes: response.data.durationMinutes ?? 0,
+      deadline: "-",
+      progressRate: 0,
+      completed: false,
+    } satisfies SafetyEducation;
+  },
+
+  async deleteEducation(courseId: number) {
+    await springApi.delete(`/api/safety/admin/courses/${courseId}`);
   },
 
   async getDailyInspectionGroups() {

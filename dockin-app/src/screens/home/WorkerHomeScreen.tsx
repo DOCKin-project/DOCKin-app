@@ -34,11 +34,21 @@ export function WorkerHomeScreen({ navigation }: BottomTabScreenProps<any>) {
       <View style={styles.headerRow}>
         <View>
           <Text style={styles.name}>근로자 {userName ?? "박철수"}</Text>
-          <Text style={styles.subtitle}>제 8 조선소 · 오늘도 안전하게 작업하세요.</Text>
         </View>
-        <TouchableOpacity onPress={() => navigation.getParent()?.navigate("Settings")}>
-          <MaterialIcons name="settings" size={28} color={theme.colors.text} />
-        </TouchableOpacity>
+        <View style={styles.headerIcons}>
+          <MaterialIcons name="search" size={24} color={theme.colors.text} />
+          <MaterialIcons name="public" size={24} color={theme.colors.text} />
+          <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+            <MaterialIcons name="person-outline" size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.pillRow}>
+        <View style={styles.sitePill}><Text style={styles.sitePillText}>제 8 조선소</Text></View>
+        <View style={[styles.statusPill, data?.state === "WORKING" ? styles.statusWorking : styles.statusBefore]}>
+          <Text style={styles.statusPillText}>{data?.state === "WORKING" ? "출근중" : "출근전"}</Text>
+        </View>
       </View>
 
       <AppCard style={styles.weatherCard}>
@@ -88,12 +98,48 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
+  },
+  headerIcons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   name: {
-    fontSize: 30,
+    fontSize: 26,
     fontWeight: "800",
     color: theme.colors.text,
+  },
+  pillRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  sitePill: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: theme.radius.pill,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    ...theme.shadow.card,
+  },
+  sitePillText: {
+    color: theme.colors.accent,
+    fontWeight: "800",
+    fontSize: 18,
+  },
+  statusPill: {
+    borderRadius: theme.radius.pill,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  statusBefore: {
+    backgroundColor: "#FF4A62",
+  },
+  statusWorking: {
+    backgroundColor: "#16C25F",
+  },
+  statusPillText: {
+    color: "#FFFFFF",
+    fontWeight: "800",
   },
   subtitle: {
     color: theme.colors.subText,
@@ -145,4 +191,3 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 });
-

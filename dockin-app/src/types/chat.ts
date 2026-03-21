@@ -12,6 +12,11 @@ export type ChatRoom = {
   isGroup?: boolean;
 };
 
+export type ChatRoomPayload = {
+  roomName: string;
+  participantIds: string[];
+};
+
 export type ChatMessage = {
   id: number;
   roomId?: number;

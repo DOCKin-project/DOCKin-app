@@ -1,5 +1,5 @@
 import { springApi } from "@/src/api/http";
-import type { PaginationParams, WorkLog, WorkLogPayload } from "@/src/types";
+import type { PaginationParams, WorkLog, WorkLogComment, WorkLogPayload, WorkLogQuery } from "@/src/types";
 import { requestFirstSuccess } from "./requestFallback";
 
 function toWorkLog(dto: any): WorkLog {
@@ -25,10 +25,43 @@ function toPageableParams(params?: PaginationParams) {
   };
 }
 
+function toWorkLogQuery(params?: WorkLogQuery) {
+  return {
+    page: params?.page ?? 0,
+    size: params?.size ?? 20,
+    ...(params?.keyword ? { keyword: params.keyword } : {}),
+  };
+}
+
+function toComment(dto: any): WorkLogComment {
+  return {
+    commentId: dto.commentId,
+    logId: dto.logId,
+    userId: dto.userId ?? "",
+    content: dto.content ?? "",
+    createdAt: dto.createdAt ?? new Date().toISOString(),
+    updatedAt: dto.updatedAt ?? dto.createdAt ?? new Date().toISOString(),
+  };
+}
+
 export const workLogService = {
   async getWorkLogs(params?: PaginationParams) {
     const response = await springApi.get("/api/work-logs", {
       params: toPageableParams(params),
+    });
+    return (response.data.content ?? []).map(toWorkLog);
+  },
+
+  async searchWorkLogs(params: WorkLogQuery) {
+    const response = await springApi.get("/api/work-logs/search", {
+      params: toWorkLogQuery(params),
+    });
+    return (response.data.content ?? []).map(toWorkLog);
+  },
+
+  async getWorkerWorkLogs(targetUserId: string, params?: Omit<WorkLogQuery, "targetUserId">) {
+    const response = await springApi.get(`/api/work-logs/others/${targetUserId}`, {
+      params: toWorkLogQuery(params),
     });
     return (response.data.content ?? []).map(toWorkLog);
   },
@@ -82,6 +115,25 @@ export const workLogService = {
 
   async deleteWorkLog(logId: number) {
     await springApi.delete(`/api/work-logs/${logId}`);
+  },
+
+  async getComments(logId: number) {
+    const response = await springApi.get(`/api/work-logs/${logId}/comments`);
+    return (response.data ?? []).map(toComment);
+  },
+
+  async createComment(logId: number, content: string) {
+    const response = await springApi.post(`/api/work-logs/${logId}/comments`, { content });
+    return toComment(response.data);
+  },
+
+  async updateComment(logId: number, commentId: number, content: string) {
+    const response = await springApi.put(`/api/work-logs/${logId}/comments/${commentId}`, { content });
+    return toComment(response.data);
+  },
+
+  async deleteComment(logId: number, commentId: number) {
+    await springApi.delete(`/api/work-logs/${logId}/comments/${commentId}`);
   },
 
   async createSttWorkLog(payload: {

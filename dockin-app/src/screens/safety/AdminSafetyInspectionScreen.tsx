@@ -18,7 +18,6 @@ export function AdminSafetyInspectionScreen() {
 
   return (
     <Screen>
-      <Text style={styles.title}>안전점검</Text>
       {summary.loading ? <LoadingState /> : null}
       {summary.data ? (
         <>
@@ -48,7 +47,6 @@ export function AdminSafetyInspectionScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 28, fontWeight: "800", color: theme.colors.text },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
   tile: { width: "47%" },
   tileLabel: { color: theme.colors.subText, marginBottom: 10 },

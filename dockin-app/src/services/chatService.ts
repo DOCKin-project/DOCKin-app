@@ -1,5 +1,5 @@
 import { springApi } from "@/src/api/http";
-import type { ChatMessage, ChatRoom, SendMessagePayload } from "@/src/types";
+import type { ChatMessage, ChatRoom, ChatRoomPayload, SendMessagePayload } from "@/src/types";
 
 function toPageableParams(params?: { page?: number; size?: number }) {
   return { page: params?.page ?? 0, size: params?.size ?? 20 };
@@ -15,6 +15,15 @@ function toChatRoom(dto: any): ChatRoom {
     creatorId: dto.creatorId,
     participantIds: dto.participantIds ?? [],
     isGroup: (dto.participantIds?.length ?? 0) > 2,
+  };
+}
+
+function toSearchParams(params?: { page?: number; size?: number; keyword?: string; lastMessageId?: number }) {
+  return {
+    page: params?.page ?? 0,
+    size: params?.size ?? 20,
+    ...(params?.keyword ? { keyword: params.keyword } : {}),
+    ...(params?.lastMessageId ? { lastMessageId: params.lastMessageId } : {}),
   };
 }
 
@@ -40,9 +49,24 @@ export const chatService = {
     return (response.data.content ?? []).map(toChatRoom);
   },
 
+  async createRoom(payload: ChatRoomPayload) {
+    const response = await springApi.post("/api/chat/room", {
+      room_name: payload.roomName,
+      participantIds: payload.participantIds,
+    });
+    return toChatRoom(response.data);
+  },
+
   async getMessages(roomId: number) {
     const response = await springApi.get(`/api/chat/room/${roomId}/messages`, {
-      params: toPageableParams(),
+      params: toSearchParams(),
+    });
+    return (response.data.content ?? []).map(toChatMessage);
+  },
+
+  async searchMessages(roomId: number, keyword: string) {
+    const response = await springApi.get(`/api/chat/room/${roomId}/messages/search`, {
+      params: toSearchParams({ keyword }),
     });
     return (response.data.content ?? []).map(toChatMessage);
   },

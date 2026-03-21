@@ -17,12 +17,12 @@ export function WorkLogListScreen({ navigation }: any) {
   return (
     <Screen>
       <View style={styles.header}>
-        <Text style={styles.title}>작업일지 목록</Text>
+        <Text style={styles.title}>같은 구역 근무일지</Text>
         <View style={styles.actions}>
-          <TouchableOpacity onPress={() => navigation.getParent()?.navigate("WorkLogTranslation")}>
+          <TouchableOpacity onPress={() => navigation.navigate("WorkLogTranslation")}>
             <MaterialIcons name="translate" size={28} color={theme.colors.primary} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.getParent()?.navigate("WorkLogEditor", { mode: "create" })}>
+          <TouchableOpacity onPress={() => navigation.navigate("WorkLogEditor", { mode: "create" })}>
             <MaterialIcons name="edit-note" size={30} color={theme.colors.accent} />
           </TouchableOpacity>
         </View>
@@ -35,7 +35,7 @@ export function WorkLogListScreen({ navigation }: any) {
         <WorkLogCard
           key={item.logId}
           item={item}
-          onPress={() => navigation.getParent()?.navigate("WorkLogDetail", { logId: item.logId })}
+          onPress={() => navigation.navigate("WorkLogDetail", { logId: item.logId })}
         />
       ))}
       <TouchableOpacity onPress={reload}>
@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 28,
-    fontWeight: "800",
+    fontSize: 18,
+    fontWeight: "700",
     color: theme.colors.text,
   },
   actions: {

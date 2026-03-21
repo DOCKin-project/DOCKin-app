@@ -29,6 +29,14 @@ export type SafetyEducation = {
   completed: boolean;
 };
 
+export type SafetyEducationPayload = {
+  title: string;
+  description: string;
+  videoUrl: string;
+  materialUrl?: string;
+  durationMinutes: number;
+};
+
 export type SafetyInspectionGroup = {
   id: number;
   title: string;

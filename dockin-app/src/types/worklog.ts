@@ -17,6 +17,15 @@ export type WorkLog = {
   managerComment?: string;
 };
 
+export type WorkLogComment = {
+  commentId: number;
+  logId: number;
+  userId: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type WorkLogPayload = {
   title: string;
   logText: string;
@@ -24,6 +33,13 @@ export type WorkLogPayload = {
   imageUrls?: string[];
   imageUrl?: string;
   audioFileUrl?: string;
+};
+
+export type WorkLogQuery = {
+  page?: number;
+  size?: number;
+  keyword?: string;
+  targetUserId?: string;
 };
 
 export type WorkLogTranslateRequest = {
