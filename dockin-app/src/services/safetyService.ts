@@ -61,6 +61,7 @@ export const safetyService = {
       deadline: "-",
       progressRate: uncompletedIds.has(item.courseId) ? 0 : 100,
       completed: !uncompletedIds.has(item.courseId),
+      status: uncompletedIds.has(item.courseId) ? "UNWATCHED" : "WATCHED",
     })) satisfies SafetyEducation[];
   },
 
@@ -79,7 +80,29 @@ export const safetyService = {
       deadline: "-",
       progressRate: item.status === "WATCHED" ? 100 : 0,
       completed: item.status === "WATCHED",
+      status: (item.status as "WATCHED" | "UNWATCHED" | "WATCHING" | undefined) ?? "UNWATCHED",
     })) satisfies SafetyEducation[];
+  },
+
+  async getUncompletedVideos(): Promise<SafetyEducation[]> {
+    const response = await springApi.get("/api/safety/user/training/uncompleted");
+    return ((response.data ?? []) as SafetyCourseDto[]).map((item) => ({
+      id: item.courseId,
+      title: item.title ?? "안전 교육",
+      description: undefined,
+      videoUrl: item.videoUrl,
+      materialUrl: undefined,
+      durationMinutes: item.durationMinutes ?? 0,
+      deadline: "-",
+      progressRate: item.status === "WATCHING" ? 50 : 0,
+      completed: item.status === "WATCHED",
+      status: (item.status as "WATCHED" | "UNWATCHED" | "WATCHING" | undefined) ?? "UNWATCHED",
+      completionDate: undefined,
+    })) satisfies SafetyEducation[];
+  },
+
+  async completeEducation(courseId: number) {
+    await springApi.patch("/api/safety/user/training/complete", { courseId });
   },
 
   async getAdminEducationList(): Promise<SafetyEducation[]> {

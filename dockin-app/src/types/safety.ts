@@ -27,6 +27,8 @@ export type SafetyEducation = {
   deadline: string;
   progressRate: number;
   completed: boolean;
+  status?: "WATCHED" | "UNWATCHED" | "WATCHING";
+  completionDate?: string;
 };
 
 export type SafetyEducationPayload = {
