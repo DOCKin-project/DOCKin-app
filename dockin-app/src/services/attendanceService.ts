@@ -1,6 +1,7 @@
 import { springApi } from "@/src/api/http";
 import type { AttendanceSummary, TodayAttendance } from "@/src/types";
 import { AttendanceState } from "@/src/types";
+import { loadAuthSession } from "@/src/utils/storage";
 
 function toTodayAttendance(dto: any): TodayAttendance {
   const state =
@@ -45,7 +46,23 @@ export const attendanceService = {
   async getTodayAttendance() {
     const response = await springApi.get("/api/attendance");
     const list = response.data ?? [];
-    const latest = list.at?.(-1) ?? list[list.length - 1];
+    const session = await loadAuthSession();
+    const employeeNumber = session.user?.employeeNumber;
+    const todayKey = new Date().toDateString();
+
+    const filtered = list
+      .filter((item: any) => !employeeNumber || item.userId === employeeNumber)
+      .filter((item: any) => {
+        const baseDate = item.clockInTime ?? item.clockOutTime;
+        return baseDate ? new Date(baseDate).toDateString() === todayKey : false;
+      })
+      .sort((a: any, b: any) => {
+        const aTime = new Date(a.clockOutTime ?? a.clockInTime ?? 0).getTime();
+        const bTime = new Date(b.clockOutTime ?? b.clockInTime ?? 0).getTime();
+        return bTime - aTime;
+      });
+
+    const latest = filtered[0] ?? list.at?.(-1) ?? list[list.length - 1];
     return latest
       ? toTodayAttendance(latest)
       : {

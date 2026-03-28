@@ -9,8 +9,8 @@ import { theme } from "@/src/theme/theme";
 import TalkInLogo from "../../../assets/chatbot/talkin.svg";
 
 export function ChatbotScreen() {
-  const [question, setQuestion] = useState("연차 규정 좀 검색해줘");
-  const [answer, setAnswer] = useState("현장 최신 규정 반영하여 검색 중 입니다.");
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
 
   const ask = async () => {
@@ -29,7 +29,7 @@ export function ChatbotScreen() {
   return (
     <Screen contentStyle={styles.screenContent}>
       <View style={styles.logoWrap}>
-        <TalkInLogo width={170} height={72} />
+        <TalkInLogo width={132} height={56} />
       </View>
       <AppCard style={styles.heroCard}>
         <View style={styles.heroTop}>
@@ -59,16 +59,18 @@ export function ChatbotScreen() {
         <TextInput value={question} onChangeText={setQuestion} style={styles.input} placeholder="토크인에게 물어보세요!" />
         <AppButton label="질문 보내기" onPress={ask} loading={loading} />
       </AppCard>
-      <AppCard style={styles.answerCard}>
-        <Text style={styles.answer}>{answer}</Text>
-      </AppCard>
+      {loading || answer ? (
+        <AppCard style={styles.answerCard}>
+          <Text style={styles.answer}>{loading ? "검색 중입니다." : answer}</Text>
+        </AppCard>
+      ) : null}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   screenContent: { paddingTop: 18, paddingBottom: 48 },
-  logoWrap: { alignItems: "center", marginTop: 4, marginBottom: -6 },
+  logoWrap: { alignItems: "center", marginTop: 2, marginBottom: -10 },
   heroCard: { paddingTop: 40, paddingBottom: 28 },
   askCard: { paddingTop: 30 },
   answerCard: { minHeight: 120, justifyContent: "center" },
@@ -96,11 +98,12 @@ const styles = StyleSheet.create({
   quickGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
+    justifyContent: "space-between",
+    rowGap: 12,
     marginTop: 22,
   },
   quickItem: {
-    width: "31%",
+    width: "30%",
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     borderWidth: 1,
