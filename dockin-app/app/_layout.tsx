@@ -1,7 +1,8 @@
 // app/_layout.tsx
 import { useEffect } from "react";
 import { Stack, router } from "expo-router";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
+import { Analytics } from "@vercel/analytics/react";
 import { useAuthStore } from "@/stores/auth.store";
 
 export default function RootLayout() {
@@ -17,10 +18,13 @@ export default function RootLayout() {
     }
 
     return (
-        <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(auth)" />
-            <Stack.Screen name="(admin)" />
-            <Stack.Screen name="(worker)" />
-        </Stack>
+        <>
+            <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="(auth)" />
+                <Stack.Screen name="(admin)" />
+                <Stack.Screen name="(worker)" />
+            </Stack>
+            {Platform.OS === "web" ? <Analytics /> : null}
+        </>
     );
 }
