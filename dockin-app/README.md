@@ -49,6 +49,17 @@ EXPO_PUBLIC_API_BASE_URL=https://your-api-domain
 - 운영 웹은 `https` API를 사용해야 합니다.
 - `http://3.34.181.59:8080` 같은 비보안 주소를 그대로 쓰면 브라우저나 WebView에서 차단될 수 있습니다.
 
+### Current Web Proxy Setup
+
+현재 운영 웹은 Vercel 프록시를 통해 백엔드로 연결되도록 구성되어 있습니다.
+
+- Web 기본 API Base URL: `/proxy`
+- Vercel rewrite: `/proxy/:match* -> http://3.34.181.59:8080/:match*`
+
+즉, 웹 브라우저는 `https://dockin-app.vercel.app/proxy/...`로 호출하고, Vercel이 내부적으로 실제 백엔드 `http://3.34.181.59:8080/...`로 전달합니다.
+
+별도의 `https` 백엔드 도메인이 준비되면 `EXPO_PUBLIC_API_BASE_URL`을 그 주소로 교체하는 것이 더 바람직합니다.
+
 ## Vercel Analytics
 
 Vercel Analytics가 연결되어 있습니다.

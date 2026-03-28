@@ -3,6 +3,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/proxy/:match*",
+      "destination": "http://3.34.181.59:8080/:match*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

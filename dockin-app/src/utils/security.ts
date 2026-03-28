@@ -7,6 +7,10 @@ export function normalizeBaseUrl(value: string) {
 }
 
 export function isSafeApiBaseUrl(value: string) {
+  if (value.startsWith("/")) {
+    return true;
+  }
+
   try {
     const url = new URL(value);
     const isLocalhost =
